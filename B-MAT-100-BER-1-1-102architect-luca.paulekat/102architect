@@ -1,0 +1,142 @@
+#!/usr/bin/env python
+import sys
+import math
+
+help = """USAGE
+    ./102architect x y transfo1 arg11 [arg12] [transfo2 arg12 [arg22]] ...
+DESCRIPTION
+    x   abscissa of the original point
+    y   ordinate of the original point
+transfo arg1 [arg2]
+    -t i j  translation along vector (i, j)
+    -z m n  scaling by factors m (x-axis) and n (y-axis)
+    -r d    rotation centered in O by a d degree angle
+    -s d    reflection over the axis passing through O with an inclination
+            angle of d degrees"""
+
+def multiply_matrix(second_matrix, first_matrix):
+    result = [[0.00, 0.00, 0.00],
+              [0.00, 0.00, 0.00],
+              [0.00, 0.00, 0.00]]
+    for i in range(3):
+        for j in range(3):
+            result[i][j] = (first_matrix[i][0] * second_matrix[0][j]) + (first_matrix[i][1] * second_matrix[1][j]) + (
+                    first_matrix[i][2] * second_matrix[2][j])
+    return result
+
+
+class architect():
+    def __init__(self):
+        self.x = int(sys.argv[1])
+        self.y = int(sys.argv[2])
+        self.trans = [0, 1, 1]
+        self.scale = [0, 1, 1]
+        self.rot = [0, 1]
+        self.refl = [0, 1]
+        self.matrix = [[1.00, 0.00, 0.00],
+                       [0.00, 1.00, 0.00],
+                       [0.00, 0.00, 1.00]]
+        self.coordinates = []
+        self.operations = []
+
+    def get_args(self, argv):
+        i = 3
+        output = ""
+        while i < len(argv):
+            if argv[i] != "-t" and argv[i] != "-z" and argv[i] != "-r" and argv[i] != "-s":
+                exit(84)
+            if i != 3:
+                output += "\n"
+            if argv[i] == "-t":
+                self.trans = ["t", int(argv[i + 1]), int(argv[i + 2])]
+                self.operations.append(self.trans)
+                output += (f"Translation along vector ({argv[i + 1]}, {argv[i + 2]})")
+                i += 2
+            if argv[i] == "-z":
+                self.scale = ["z", int(argv[i + 1]), int(argv[i + 2])]
+                self.operations.append(self.scale)
+                output += (f"Scaling by factors {argv[i + 1]} and {argv[i + 2]}")
+                i += 2
+            if argv[i] == "-r":
+                self.rot = ["r", int(argv[i + 1])]
+                self.operations.append(self.rot)
+                output += (f"Rotation by a {argv[i + 1]} degree angle")
+                i += 1
+            if argv[i] == "-s":
+                self.refl = ["s", int(argv[i + 1])]
+                self.operations.append(self.refl)
+                output += (f"Reflection over an axis with an inclination angle of {argv[i + 1]} degrees")
+                i += 1
+            i += 1
+        print(output)
+
+    def translation(self, args):
+        matrix = [[1.00, 0.00, args[1]],
+                  [0.00, 1.00, args[2]],
+                  [0.00, 0.00, 1.00]]
+        self.matrix = multiply_matrix(self.matrix, matrix)
+
+    def scaling(self, args):
+        matrix = [[args[1], 0.00, 0.00],
+                  [0.00, args[2], 0.00],
+                  [0.00, 0.00, 1.00]]
+        self.matrix = multiply_matrix(self.matrix, matrix)
+
+    def rotating(self, args):
+        matrix = [[math.cos(math.radians(args[1])), (math.sin(math.radians(args[1]))) * -1, 0.00],
+                  [math.sin(math.radians(args[1])), math.cos(math.radians(args[1])), 0.00],
+                  [0.00, 0.00, 1.00]]
+        self.matrix = multiply_matrix(self.matrix, matrix)
+
+    def reflecting(self, args):
+        matrix = [[math.cos(math.radians(args[1]) * 2), math.sin(math.radians(args[1]) * 2), 0.00],
+                  [math.sin(math.radians(args[1]) * 2), (math.cos(math.radians(args[1]) * 2)) * -1, 0.00],
+                  [0.00, 0.00, 1.00]]
+        self.matrix = multiply_matrix(self.matrix, matrix)
+
+    def round(self, matrix):
+        for r in range(len(matrix)):
+            for e in range(len(matrix[r])):
+                if round(matrix[r][e], 2) == -0:
+                    matrix[r][e] = 0
+                self.matrix[r][e] = "{:.2f}".format(round(matrix[r][e], 2))
+
+    def get_point(self):
+        matrix = [[self.x, 0, 0], [self.y, 0, 0], [1, 0, 0]]
+        self.coordinates = multiply_matrix(matrix, self.matrix)
+
+    def print_res(self):
+        for r in obj.matrix:
+            print(str(r).replace("'", "").replace("[", "").replace("]", "").replace(",", ""))
+        print("({:.2f}, {:.2f}) => ({:.2f}, {:.2f})".format(round(obj.x, 2), round(obj.y, 2),
+                                                            round(obj.coordinates[0][0], 2),
+                                                            round(obj.coordinates[1][0], 2)))
+
+
+if __name__ == '__main__':
+    if sys.argv and "-h" in sys.argv:
+        print(help)
+    if len(sys.argv) < 5:
+        exit(84)
+    try:
+        int(sys.argv[1])
+        int(sys.argv[2])
+    except:
+        exit(84)
+    try:
+        obj = architect()
+        obj.get_args(sys.argv)
+        for el in obj.operations:
+            if el[0] == "t":
+                obj.translation(el)
+            if el[0] == "z":
+                obj.scaling(el)
+            if el[0] == "r":
+                obj.rotating(el)
+            if el[0] == "s":
+                obj.reflecting(el)
+        obj.get_point()
+        obj.round(obj.matrix)
+        obj.print_res()
+    except:
+        exit(84)

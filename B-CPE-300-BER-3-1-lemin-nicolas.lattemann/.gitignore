@@ -1,0 +1,13 @@
+*.o
+*.code-workspace
+cmake-build-debug
+CMakeLists.txt
+.idea
+lem_in
+unit_tests*
+*.a
+append_to_arr/
+vgcore.*
+maps
+input
+*.pl

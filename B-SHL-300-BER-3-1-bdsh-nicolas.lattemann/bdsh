@@ -1,0 +1,23 @@
+#!/bin/sh
+source functions/help.sh
+source functions/parse_args.sh
+source functions/insert.sh
+source functions/create.sh
+source functions/update.sh
+source functions/select.sh
+source functions/describe.sh
+
+main () {
+    detect_mode $@
+
+    case $mode in
+        "create") create ${new_args[@]};;
+        "insert") insert;;
+        "update") update;;
+        "describe") describe;;
+        "select") select_ $new_args;;
+        *) arguments_error "$mode is not a command";;
+    esac
+}
+
+main $@

@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+
+import math
+import sys
+import time
+
+global float
+
+help = """USAGE
+    ./105torus opt a0 a1 a2 a3 a4 n
+DESCRIPTION
+    opt     method option:
+                1 for the bisection method
+                2 for Newton’s method
+                3 for the secant method
+    a[0-4]  coefficients of the equation
+    n       precision (the application of the polynomial to the solution should
+            be smaller than 10ˆ-n)"""
+
+def print_precision(x, n):
+    global float
+    if (len(str(x)) >= n + 2 or float == 1):
+        float = 1
+        print("x = %0.*f" % (n, x))
+    else:
+        print(f"x = {x}")
+
+def bisection_method(a4, a3, a2, a1, a0, n):
+    a = 0
+    b = 1
+    c = (a + b)/2
+    prev = 0
+    if abs(f(a4, a3, a2, a1, a0, c)) <= math.pow(10, -n):
+        print_precision(c, n)
+        return
+    while time.time() < timeout:
+        print_precision(c, n)
+
+        if (f(a4, a3, a2, a1, a0, a) * f(a4, a3, a2, a1, a0, c)) < 0:
+            b = c
+        else:
+            a = c
+
+        c = (a + b)/2
+
+        if prev == c:
+            exit(84)
+        prev = c
+        if abs(f(a4, a3, a2, a1, a0, c)) <= math.pow(10, -n):
+            print_precision(c, n)
+            break
+
+def newtons_method(a4, a3, a2, a1, a0, n):
+    x0 = 0.5
+    x1 = 0
+    prev = 0
+    if abs(f(a4, a3, a2, a1, a0, x0)) <= math.pow(10, -n):
+        print_precision(x0, n)
+        return
+    while time.time() < timeout:
+        print_precision(x0, n)
+
+        if f_one(a4, a3, a2, a1, x0) == 0:
+            exit (84)
+        x1 = x0 - (f(a4, a3, a2, a1, a0, x0) / f_one(a4, a3, a2, a1, x0))
+        x0 = x1
+
+        if prev == x0:
+            exit (84)
+        prev = x0
+
+        if abs(f(a4, a3, a2, a1, a0, x0)) <= math.pow(10, -n):
+            print_precision(x0, n)
+            break
+
+def secant_method(a4, a3, a2, a1, a0, n):
+    x0 = 0
+    x1 = 1
+    x2 = 0
+    prev = 0
+
+    while time.time() < timeout:
+        if (f(a4, a3, a2, a1, a0, x1) - f(a4, a3, a2, a1, a0, x0)) == 0:
+            exit (84)
+        x2 = x1 - ((f(a4, a3, a2, a1, a0, x1) * (x1 - x0)) / (f(a4, a3, a2, a1, a0, x1) - f(a4, a3, a2, a1, a0, x0)))
+        x0, x1 = x1, x2
+        print_precision(x1, n)
+
+        if prev == x1:
+            exit(84)
+        prev = x1
+
+        if abs(f(a4, a3, a2, a1, a0, x1)) <= math.pow(10, -n):
+            break
+
+def f(a4, a3, a2, a1, a0, i):
+    return a4*math.pow(i, 4) + a3*math.pow(i, 3) + a2*math.pow(i, 2) + a1*math.pow(i, 1) + a0
+
+def f_one(a4, a3, a2, a1, i):
+    return (4*a4*math.pow(i, 3)) + (3*a3*math.pow(i, 2)) + (2*a2*math.pow(i, 1)) + a1
+
+#bisection_method(1, -5, 6, 0, -1, 6)
+#newtons_method(1, -5, 6, 0, -1, 12)
+#secant_method(1, -5, 6, 0, -1, 8)
+
+if __name__ == '__main__':
+    timeout = time.time() + 8
+    try:
+        if sys.argv and "-h" in sys.argv or not len(sys.argv) > 1:
+            print(help)
+            exit(0)
+        if len(sys.argv) != 8:
+            exit(84)
+        try:
+            int(sys.argv[1])
+            int(sys.argv[2])
+            int(sys.argv[3])
+            int(sys.argv[4])
+            int(sys.argv[5])
+            int(sys.argv[6])
+            int(sys.argv[7])
+        except:
+            exit(84)
+        if int(sys.argv[7]) <= 0:
+            exit (84)
+        if int(sys.argv[1]) == 1:
+            bisection_method(int(sys.argv[6]), int(sys.argv[5]), int(sys.argv[4]), int(sys.argv[3]), int(sys.argv[2]), int(sys.argv[7]))
+        elif int(sys.argv[1]) == 2:
+            newtons_method(int(sys.argv[6]), int(sys.argv[5]), int(sys.argv[4]), int(sys.argv[3]), int(sys.argv[2]), int(sys.argv[7]))
+        elif int(sys.argv[1]) == 3:
+            secant_method(int(sys.argv[6]), int(sys.argv[5]), int(sys.argv[4]), int(sys.argv[3]), int(sys.argv[2]), int(sys.argv[7]))
+        else:
+            exit(84)
+    except:
+        print("An error has occured.")
+        exit(84)
+    exit(0)

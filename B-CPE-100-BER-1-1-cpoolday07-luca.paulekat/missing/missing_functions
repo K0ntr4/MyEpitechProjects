@@ -1,0 +1,2 @@
+27 int my_showstr(char const *str);
+28 int my_showmem(char const *str, int size);

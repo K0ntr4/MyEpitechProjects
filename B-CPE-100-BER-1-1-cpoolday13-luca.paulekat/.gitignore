@@ -1,0 +1,12 @@
+a.out
+push_that.sh
+unit_tests
+*.gcda
+*.gcno
+missing/
+*.a
+*.o
+*.gch
+include/my.h
+do_op/do-op
+main.c

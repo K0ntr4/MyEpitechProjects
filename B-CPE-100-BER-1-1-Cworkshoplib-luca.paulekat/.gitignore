@@ -1,0 +1,6 @@
+*.rb
+lib/save
+./a.out
+main.c
+include/my.h
+lib/lib.a

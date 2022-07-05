@@ -1,0 +1,10 @@
+*.code-workspace
+vgcore.*
+*.o
+*.hi
+Makefile
+pushswap_checker
+test.sh
+test.txt
+push_swap
+random_file.js

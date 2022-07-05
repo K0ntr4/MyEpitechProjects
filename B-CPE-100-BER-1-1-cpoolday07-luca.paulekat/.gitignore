@@ -1,0 +1,8 @@
+a.out
+./main.c
+push_that.sh
+unit_tests
+*.gcda
+*.gcno
+Missing/
+*.a

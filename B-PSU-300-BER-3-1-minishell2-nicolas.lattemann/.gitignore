@@ -1,0 +1,13 @@
+CMakeLists.txt
+cmake-build-debug
+.idea
+*.out
+vgcore*
+unit_tests*
+mysh
+libmy.a
+*code-workspace
+*.o
+norm.sh
+102architect
+102architectcopy
